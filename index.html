@@ -556,31 +556,29 @@ th.col-addr-fill, td.col-addr-fill {
 }
 .contact-mail-btn {
   position: fixed;
-  right: 24px;
-  bottom: 98px;
-  min-width: 68px;
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 18px;
-  background: #ffffff;
+  right: 28px;
+  bottom: 100px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
   color: var(--hd-trust-blue);
-  border: 1px solid rgba(0, 37, 84, 0.16);
-  box-shadow: 0 6px 16px rgba(0, 37, 84, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 6px 18px rgba(0, 37, 84, 0.24);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  font-size: 13px;
+  font-size: 23px;
   font-weight: 800;
   text-decoration: none;
   z-index: 9998;
   transition: all 0.2s ease;
 }
 .contact-mail-btn:hover {
-  transform: translateY(-2px);
+  transform: scale(1.08) translateY(-3px);
   color: #ffffff;
   background: var(--hd-discovery-blue);
-  box-shadow: 0 8px 20px rgba(0, 92, 185, 0.28);
+  box-shadow: 0 10px 24px rgba(0, 92, 185, 0.34);
 }
 
 /* Chat Window */
@@ -2063,7 +2061,7 @@ function processChatQuery(query) {
 </script>
 
   <!-- Contact Mail Button -->
-  <a class="contact-mail-btn" href="mailto:byungchul.jo@hd.com?subject=%5B%ED%98%84%EA%B1%B4%ED%9A%8C%20%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C%20%EB%AC%B8%EC%9D%98%5D" title="대시보드 관련 문의 메일 보내기" aria-label="대시보드 관련 문의 메일 보내기">문의</a>
+  <a class="contact-mail-btn" href="mailto:byungchul.jo@hd.com?subject=%ED%98%91%EB%A0%A5%EC%82%AC%EC%9C%A1%EC%84%B1%ED%8C%80%20%EC%A7%80%EC%9B%90%ED%98%84%ED%99%A9%20%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C%20%EB%AC%B8%EC%9D%98%20%EA%B1%B4" title="대시보드 관련 문의 메일 보내기" aria-label="대시보드 관련 문의 메일 보내기">✉</a>
 
   <!-- Floating Chatbot FAB Button -->
   <div id="chatbotFab" class="chatbot-fab" onclick="toggleChat()" title="협력사육성팀 스마트 챗봇 질의응답">
