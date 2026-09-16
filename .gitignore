@@ -1,0 +1,9 @@
+.codex_work/
+.deploy/
+백업/
+*.xlsx
+*.xlsm
+*.xls
+*.pdf
+*.log
+~$*
