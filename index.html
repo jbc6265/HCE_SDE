@@ -2018,6 +2018,50 @@ function normText(str) {
   return (str || '').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
 }
 
+function getFieldSupportEntries(record) {
+  if (!record) return [];
+  return record.detail.split(' / ').map(detail => {
+    const match = detail.match(/^(.+)\((\d{4}년(?: [상하]반기)?)\)$/);
+    return match ? {activity: match[1], period: match[2]} : null;
+  }).filter(Boolean);
+}
+
+function fieldSupportChatReply(nq) {
+  const activityKeywords = [
+    ['HDPS 활동', ['hdps']],
+    ['용접로봇', ['용접로봇', '로봇용접']],
+    ['레이저용접', ['레이저용접', '레이져용접']],
+    ['사상', ['사상']],
+    ['템플릿', ['템플릿', '템플리트', '지그최적화']]
+  ];
+  const activities = activityKeywords.filter(([, words]) => words.some(w => nq.includes(w))).map(([a]) => a);
+  if (!activities.length && !nq.includes('현장개선') && !nq.includes('현쟁개선')) return null;
+  const years = [...nq.matchAll(/20\d{2}|(?<!\d)\d{2}(?=년)/g)].map(m => m[0].length === 2 ? '20' + m[0] : m[0]);
+  const halves = ['상반기', '하반기'].filter(h => nq.includes(h));
+  const regions = [...new Set(SUPPLIERS.map(s => s.region))].filter(r => r && nq.includes(normText(r)));
+  const divisions = [...new Set(SUPPLIERS.map(s => s.bunkwa))].filter(d => d && nq.includes(normText(d)));
+  const matches = FIELD_IMPROVEMENTS.map(record => {
+    const supplier = SUPPLIERS.find(s => s.name === record.name);
+    const entries = getFieldSupportEntries(record).filter(e =>
+      (!activities.length || activities.includes(e.activity)) &&
+      (!years.length || years.some(y => e.period.startsWith(y + '년'))) &&
+      (!halves.length || halves.some(h => e.period.includes(h))));
+    return {record, supplier, entries};
+  }).filter(({supplier, entries}) => entries.length &&
+    (!regions.length || (supplier && regions.includes(supplier.region))) &&
+    (!divisions.length || (supplier && divisions.includes(supplier.bunkwa))));
+  const count = matches.reduce((sum, r) => sum + r.entries.length, 0);
+  const label = [...(activities.length ? activities : ['현장개선 지원']), ...years.map(y => y + '년'), ...halves, ...regions, ...divisions].join(' · ');
+  const link = '<br><a href="#field-improvement" onclick="switchTab(\'field-improvement\'); toggleChat();">현장개선 지원현황 전체 보기</a>';
+  if (!matches.length) return '<strong>' + escapeHtml(label) + '</strong><br>현건회 129개사 기준, 해당 조건에 일치하는 활동 이력이 자료에서 확인되지 않습니다.' + link;
+  const rows = matches.map(({record, entries}) => '<tr><td>' + escapeHtml(record.name) + '</td><td>' +
+    entries.map(e => escapeHtml(e.activity + ' (' + e.period + ')')).join('<br>') + '</td></tr>').join('');
+  return '<strong>' + escapeHtml(label) + '</strong><br>현건회 129개사 중 <strong>' + matches.length +
+    '개사</strong>, 활동 이력 <strong>' + count + '건</strong>입니다.' +
+    '<table class="bot-table"><thead><tr><th>회사명</th><th>활동 / 시기</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div style="font-size:11px; margin-top:6px;">활동·연도별 집계이며, 원본에 완료 여부가 없어 완료 실적과는 구분됩니다.</div>' + link;
+}
+
 function processChatQuery(query) {
   const q = query.toLowerCase().trim();
   const nq = normText(q);
@@ -2028,6 +2072,10 @@ function processChatQuery(query) {
     if (cname && (nq.includes(cname) || (cname.length >= 3 && nq.includes(cname.substring(0, 3))))) {
       let mesBadge = getMesBadge(s.mes_stat);
       let safeBadge = getSafeBadge(s.safe_val);
+      const fieldSupport = FIELD_IMPROVEMENTS.find(r => r.name === s.name);
+      const fieldText = fieldSupport
+        ? getFieldSupportEntries(fieldSupport).map(e => escapeHtml(e.activity + ' (' + e.period + ')')).join('<br>')
+        : '자료에서 확인된 이력 없음';
       let card = '<div class="bot-card">' +
         '<div class="bot-card-title">🏢 ' + s.name + ' (' + s.bonbu + ' / ' + s.bunkwa + ')</div>' +
         '<div><strong>대표자:</strong> ' + (s.ceo || '-') + ' | <strong>HCE코드:</strong> ' + (s.code || '-') + '</div>' +
@@ -2036,13 +2084,17 @@ function processChatQuery(query) {
         '<strong>🏭 MES 구축:</strong> ' + mesBadge + ' ' + (s.si_company && s.si_company !== '-' ? '(' + s.si_company + ')' : '') + '<br>' +
         (s.smart_plan && s.smart_plan !== '계획 미기재' ? '<span style="font-size:11px; color:#b45309;">• 참여계획: ' + s.smart_plan + '</span><br>' : '') +
         '<strong>🛡️ 안전 구축지원:</strong> ' + safeBadge + '<br>' +
-        '<strong>📋 종합평가 대상:</strong> ' + s.eval_stat +
+        '<strong>📋 종합평가 대상:</strong> ' + s.eval_stat + '<br>' +
+        '<strong>현장개선 지원활동:</strong><br>' + fieldText +
         '</div>' +
         '</div>';
       return '<strong>' + s.name + '</strong> 협력사 상세 데이터입니다.' + card;
     }
   }
   
+  const fieldReply = fieldSupportChatReply(nq);
+  if (fieldReply !== null) return fieldReply;
+
   // 2. Safety Inquiries
   if (nq.includes('안전') || nq.includes('안전사업장') || nq.includes('안전동행')) {
     if (nq.includes('미구축') || nq.includes('기록없음') || nq.includes('안한')) {
@@ -2160,13 +2212,15 @@ function processChatQuery(query) {
       '1. <strong>전체 협력사 POOL:</strong> 129개사 (건기 98 / 엔진 31)<br>' +
       '2. <strong>MES 구축 완료:</strong> 103개사 (79.8%) [육성팀 지원 54사 / 자체 49사]<br>' +
       '3. <strong>안전사업장 구축지원:</strong> 45개사 (34.9%) [미구축 84개사]<br>' +
-      '4. <strong>종합등급평가 대상:</strong> 125개사 (96.9%)<br><br>' +
+      '4. <strong>종합등급평가 대상:</strong> 125개사 (96.9%)<br>' +
+      '5. <strong>현장개선 지원:</strong> ' + FIELD_IMPROVEMENTS.length + '개사 / ' + FIELD_IMPROVEMENTS.reduce((sum, r) => sum + getFieldSupportEntries(r).length, 0) + '건<br><br>' +
       '💡 <strong>추천 질문:</strong><br>' +
       '• 회사명 검색 (예: "선진정공", "오성기공")<br>' +
       '• "MES 미구축 협력사"<br>' +
       '• "2025년 안전 지원업체"<br>' +
       '• "경남 지역 협력사"<br>' +
-      '• "대물제관 분과 현황"';
+      '• "대물제관 분과 현황"<br>' +
+      '• "HDPS 활동 업체" 또는 "2026년 현장개선"';
   }
   
   // Default fallback
@@ -2176,7 +2230,8 @@ function processChatQuery(query) {
     '• <strong>MES 미구축</strong> 또는 <strong>26년 MES 계획</strong><br>' +
     '• <strong>2025년 안전지원</strong> 또는 <strong>안전 미구축</strong><br>' +
     '• <strong>판금 분과</strong> 또는 <strong>경남 지역</strong><br>' +
-    '• <strong>종합평가 비대상사</strong>';
+    '• <strong>종합평가 비대상사</strong><br>' +
+    '• <strong>현장개선 지원현황</strong> 또는 <strong>2026년 하반기 HDPS</strong>';
 }
 
 </script>
@@ -2205,13 +2260,15 @@ function processChatQuery(query) {
     <div id="chatMessages" class="chat-messages">
       <div class="msg-bubble msg-bot">
         안녕하세요! <strong>협력사육성팀 지원현황 안내 챗봇</strong>입니다.<br><br>
-        현건회 129개사의 <strong>MES 구축 현황, 안전사업장 구축 지원, 종합등급평가 대상</strong> 정보를 즉시 검색해 드립니다.<br><br>
+        현건회 129개사의 <strong>MES 구축 현황, 안전사업장 구축 지원, 종합등급평가 대상, 현장개선·HDPS 지원활동</strong> 정보를 즉시 검색해 드립니다.<br><br>
         아래 추천 질문을 누르시거나 궁금하신 회사명/조건을 입력해 보세요!
       </div>
     </div>
 
     <!-- Quick Chips -->
     <div class="chat-chips">
+      <button class="chip-btn" onclick="sendChip('현장개선 지원현황')">현장개선 지원</button>
+      <button class="chip-btn" onclick="sendChip('HDPS 활동 업체')">HDPS 활동</button>
       <button class="chip-btn" onclick="sendChip('선진정공 현황')">🏢 선진정공</button>
       <button class="chip-btn" onclick="sendChip('오성기공 현황')">🏢 오성기공</button>
       <button class="chip-btn" onclick="sendChip('MES 미구축 협력사')">⚠️ MES 미구축사</button>
