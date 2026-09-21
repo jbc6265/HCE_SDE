@@ -2025,6 +2025,10 @@ function normText(str) {
   return (str || '').toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
 }
 
+function normCompanyName(str) {
+  return normText((str || '').replace(/유한책임회사|주식회사|유한회사|합자회사|합명회사|[（(]\s*(?:주|유|자|합)\s*[）)]|㈜|㈲/g, ''));
+}
+
 function getFieldSupportEntries(record) {
   if (!record) return [];
   return record.detail.split(' / ').map(detail => {
@@ -2074,11 +2078,12 @@ function processChatQuery(query) {
   const nq = normText(q);
   
   // 1. Check Company Name in SUPPLIERS
-  const exactCompanyMatches = SUPPLIERS.filter(s => normText(s.name) && nq.includes(normText(s.name)))
-    .sort((a, b) => normText(b.name).length - normText(a.name).length);
+  const companyQuery = normCompanyName(query);
+  const exactCompanyMatches = SUPPLIERS.filter(s => normCompanyName(s.name) && companyQuery.includes(normCompanyName(s.name)))
+    .sort((a, b) => normCompanyName(b.name).length - normCompanyName(a.name).length);
   for (const s of (exactCompanyMatches.length ? exactCompanyMatches : SUPPLIERS)) {
-    const cname = normText(s.name);
-    if (cname && (nq.includes(cname) || (cname.length >= 3 && nq.includes(cname.substring(0, 3))))) {
+    const cname = normCompanyName(s.name);
+    if (cname && (companyQuery.includes(cname) || (cname.length >= 3 && companyQuery.includes(cname.substring(0, 3))))) {
       let mesBadge = getMesBadge(s.mes_stat);
       let safeBadge = getSafeBadge(s.safe_val);
       const fieldSupport = FIELD_IMPROVEMENTS.find(r => r.name === s.name);
