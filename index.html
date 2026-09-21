@@ -946,6 +946,7 @@ th.col-addr-fill, td.col-addr-fill {
                 <th>지역</th>
                 <th>MES 구축상태</th>
                 <th>안전사업장 구축지원</th>
+                <th style="min-width:210px;">현장개선 지원현황</th>
                 <th>종합등급 대상</th>
               </tr>
             </thead>
@@ -1465,6 +1466,11 @@ function renderOverview() {
   if (!tb) return;
   const unbuilt = SUPPLIERS.filter(s => s.mes_stat === 'MES 미구축');
   tb.innerHTML = unbuilt.map(s => {
+    const fieldSupport = FIELD_IMPROVEMENTS.find(r => r.name === s.name);
+    const fieldSupportHtml = fieldSupport
+      ? '<span class="badge badge-green">지원 이력 있음</span><div style="margin-top:4px; font-size:12px;">' +
+        getFieldSupportEntries(fieldSupport).map(e => escapeHtml(e.activity + ' (' + e.period + ')')).join('<br>') + '</div>'
+      : '<span class="badge badge-gray">확인된 이력 없음</span>';
     const safeBadge = s.is_safe ? '<span class="badge badge-green">' + s.safe_val.split('\n').join(' · ') + '</span>' : '<span class="badge badge-gray">미구축</span>';
     const evalBadge = s.eval_stat.includes('비대상') ? '<span class="badge badge-gray">' + s.eval_stat + '</span>' : '<span class="badge badge-blue">' + s.eval_stat + '</span>';
     return '<tr class="clickable" onclick="openModal(' + s.no + ')">' +
@@ -1476,6 +1482,7 @@ function renderOverview() {
       '<td style="text-align:center;">' + s.region + '</td>' +
       '<td><span class="badge badge-red">MES 미구축</span></td>' +
       '<td>' + safeBadge + '</td>' +
+      '<td style="white-space:normal; min-width:210px; max-width:320px; overflow-wrap:anywhere;">' + fieldSupportHtml + '</td>' +
       '<td>' + evalBadge + '</td>' +
       '</tr>';
   }).join('');
