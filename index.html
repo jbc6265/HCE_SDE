@@ -826,7 +826,7 @@ th.col-addr-fill, td.col-addr-fill {
         <div class="logo-text">
           <div class="title-row">
             <h1>협력사육성팀 지원현황 통합 대시보드</h1>
-            <span class="version-label">버전: 2026-09-16</span>
+            <span class="version-label">버전: 2026-09-21</span>
           </div>
           <p>HD건설기계 협력회사 협의회 정회원 129개사 및 종합등급평가 466개사 전수 관리 대시보드</p>
         </div>
@@ -844,7 +844,7 @@ th.col-addr-fill, td.col-addr-fill {
       <button class="tab-btn" data-tab="safety" onclick="switchTab('safety')">🛡️ 안전사업장 구축 현황</button>
       <button class="tab-btn" data-tab="mes" onclick="switchTab('mes')">🏭 MES 구축 현황</button>
       <button class="tab-btn" data-tab="evaluation" onclick="switchTab('evaluation')">📋 종합등급평가 현황</button>
-      <button class="tab-btn" data-tab="field-improvement" onclick="switchTab('field-improvement')">🛠️ 현장개선</button>
+      <button class="tab-btn" data-tab="field-improvement" onclick="switchTab('field-improvement')">🛠️ 현장개선 지원현황</button>
     </nav>
   </header>
 
@@ -1265,14 +1265,14 @@ th.col-addr-fill, td.col-addr-fill {
     <div id="tab-field-improvement" class="tab-content">
       <div class="kpi-grid">
         <div class="kpi-card" style="--kpi-border: var(--hd-prosperity-green);">
-          <div class="kpi-label">현장개선/효율증대 참여 협력사</div>
-          <div class="kpi-num" style="color: var(--hd-prosperity-green);">33<span>개사</span></div>
-          <div class="kpi-desc">총 활동 이력 <strong>54건</strong>을 업체별 1행으로 통합</div>
+          <div class="kpi-label">현장개선 지원 협력사</div>
+          <div class="kpi-num" style="color: var(--hd-prosperity-green);">40<span>개사</span></div>
+          <div class="kpi-desc">현건회 129개사 중 · 총 활동 이력 <strong>65건</strong></div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">현장개선</div>
-          <div class="kpi-num">25<span>건</span></div>
-          <div class="kpi-desc">현장개선(~19년) 시트 기준</div>
+          <div class="kpi-num">26<span>건</span></div>
+          <div class="kpi-desc">2014~2019년 · 25개사</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">용접/사상/템플릿 활동</div>
@@ -1280,23 +1280,23 @@ th.col-addr-fill, td.col-addr-fill {
           <div class="kpi-desc">용접로봇 · 레이저용접 · 사상 · 템플릿</div>
         </div>
         <div class="kpi-card" style="--kpi-border: var(--hd-discovery-blue);">
-          <div class="kpi-label">활동년도 분포</div>
-          <div class="kpi-num" style="color: var(--hd-discovery-blue);">4<span>구간</span></div>
-          <div class="kpi-desc">2019년 이전 25건 · 2023년 6건 · 2024년 10건 · 2025년 13건</div>
+          <div class="kpi-label">HDPS 활동</div>
+          <div class="kpi-num" style="color: var(--hd-discovery-blue);">10<span>건</span></div>
+          <div class="kpi-desc">2026년 상반기 6건 · 하반기 4건</div>
         </div>
       </div>
 
       <div class="content-card">
         <div class="card-head">
           <div>
-            <h2>현장개선 및 주요활동 협력사 상세 리스트</h2>
-            <p>년도별 주요활동 협력사 현황-R2.xlsx의 5개 활동 시트를 현건회 129개사 기준으로 매칭하고, 중복 업체는 1행에 통합한 목록입니다.</p>
+            <h2>현장개선 지원현황</h2>
+            <p>현건회 129개사 기준 · 2014~2026년 · 출처: 년도별 주요활동 협력사 현황-R2.xlsx, 6개 활동 시트</p>
           </div>
           <button class="btn-export" onclick="exportTableToCSV('fieldImprovementTable', '현건회_현장개선_주요활동_협력사.csv')">📥 CSV 다운로드</button>
         </div>
         <div class="toolbar">
           <div class="filter-group" id="field-improvement-filter-buttons"></div>
-          <input type="text" class="search-box" placeholder="회사명, 분과, 활동 검색..." onkeyup="searchTable('fieldImprovementTable', this.value)">
+          <input type="text" class="search-box" placeholder="회사명, 분과, 활동 검색..." oninput="searchTable('fieldImprovementTable', this.value)">
         </div>
         <div class="table-wrap">
           <table id="fieldImprovementTable">
@@ -1305,10 +1305,10 @@ th.col-addr-fill, td.col-addr-fill {
                 <th class="col-no">순번</th>
                 <th class="col-bonbu">본부</th>
                 <th class="col-bunkwa">분과</th>
-                <th class="col-name">회사명</th>
+                <th class="col-name" style="width:22%;">회사명</th>
                 <th class="col-ceo">대표자</th>
-                <th class="col-badge">현장개선활동</th>
-                <th class="col-badge">활동년도</th>
+                <th class="col-badge" style="width:34%;">현장개선활동</th>
+                <th class="col-badge" style="width:20%;">활동년도</th>
               </tr>
             </thead>
             <tbody id="fieldImprovementTableBody"></tbody>
@@ -1373,7 +1373,9 @@ const EVALUATIONS = [{"no": 1,"division": "건기","name": "(유)신일정밀","
 
 
 
-const FIELD_IMPROVEMENTS = [{"bonbu":"건기","bunkwa":"가공","name":"㈜삼우테크","ceo":"고제방","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":1},{"bonbu":"건기","bunkwa":"가공","name":"㈜티엠시","ceo":"조영호","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":2},{"bonbu":"건기","bunkwa":"가공","name":"㈜혜인정밀","ceo":"손병춘","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":3},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜세안정기","ceo":"장길화","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":4},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜에스틸","ceo":"김용석","activity":"현장개선 · 용접로봇","year":"2019년 이전 · 2024년","detail":"현장개선(2019년 이전) / 용접로봇(2024년)","count":2,"no":5},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우림","ceo":"노재현","activity":"사상 · 용접로봇","year":"2023년 · 2024년 · 2025년","detail":"사상(2023년) / 용접로봇(2023년) / 사상(2024년) / 사상(2025년)","count":4,"no":6},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우진","ceo":"서찬석","activity":"현장개선 · 사상 · 용접로봇 · 템플릿","year":"2019년 이전 · 2023년 · 2024년 · 2025년","detail":"현장개선(2019년 이전) / 사상(2023년) / 사상(2024년) / 용접로봇(2024년) / 사상(2025년) / 템플릿(2025년)","count":6,"no":7},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우진이엔지","ceo":"서정범","activity":"현장개선 · 용접로봇","year":"2019년 이전 · 2023년","detail":"현장개선(2019년 이전) / 용접로봇(2023년)","count":2,"no":8},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜정우산업","ceo":"최종영","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":9},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜태화물산","ceo":"최윤화","activity":"현장개선 · 템플릿 · 사상","year":"2019년 이전 · 2024년 · 2025년","detail":"현장개선(2019년 이전) / 템플릿(2024년) / 사상(2025년)","count":3,"no":10},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜한양정밀","ceo":"신유섭","activity":"용접로봇","year":"2024년","detail":"용접로봇(2024년)","count":1,"no":11},{"bonbu":"건기","bunkwa":"대물제관","name":"동해기계㈜","ceo":"장경수","activity":"현장개선 · 템플릿","year":"2019년 이전 · 2024년","detail":"현장개선(2019년 이전) / 템플릿(2024년)","count":2,"no":12},{"bonbu":"건기","bunkwa":"대물제관","name":"선진정공㈜","ceo":"박성수","activity":"현장개선 · 사상 · 용접로봇 · 템플릿","year":"2019년 이전 · 2023년 · 2024년 · 2025년","detail":"현장개선(2019년 이전) / 사상(2023년) / 용접로봇(2023년) / 사상(2024년) / 사상(2025년) / 템플릿(2025년)","count":6,"no":13},{"bonbu":"건기","bunkwa":"동력·전장","name":"㈜해송엔지니어링","ceo":"류경환","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":14},{"bonbu":"건기","bunkwa":"동력·전장","name":"오성㈜","ceo":"구본희","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":15},{"bonbu":"건기","bunkwa":"동력·전장","name":"태경산업㈜","ceo":"김동찬","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":16},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜명진기업","ceo":"김택세","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":17},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜월드튜브","ceo":"정종철","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":18},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜청우에이티에스","ceo":"김왕규","activity":"현장개선 · 레이저용접","year":"2019년 이전 · 2025년","detail":"현장개선(2019년 이전) / 레이저용접(2025년)","count":2,"no":19},{"bonbu":"건기","bunkwa":"소물제관","name":"동양하이테크㈜","ceo":"최봉훈","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":20},{"bonbu":"건기","bunkwa":"소물제관","name":"성원하이드로릭스㈜","ceo":"권성흠","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":21},{"bonbu":"건기","bunkwa":"유압","name":"㈜디와이솔루텍","ceo":"이재영","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":22},{"bonbu":"건기","bunkwa":"유압","name":"대경기업㈜","ceo":"조승주","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":23},{"bonbu":"건기","bunkwa":"유압","name":"썬하이드로릭스코리아㈜","ceo":"김경필","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":24},{"bonbu":"건기","bunkwa":"판금","name":"㈜서연탑메탈","ceo":"최원재","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":25},{"bonbu":"건기","bunkwa":"판금","name":"㈜성미에스테크","ceo":"최상붕","activity":"레이저용접","year":"2024년","detail":"레이저용접(2024년)","count":1,"no":26},{"bonbu":"건기","bunkwa":"판금","name":"㈜진웅엠피아","ceo":"김영재","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":27},{"bonbu":"건기","bunkwa":"판금","name":"㈜컴윈스","ceo":"김태용","activity":"현장개선 · 레이저용접","year":"2019년 이전 · 2025년","detail":"현장개선(2019년 이전) / 레이저용접(2025년)","count":2,"no":28},{"bonbu":"건기","bunkwa":"판금","name":"㈜현대엘앤티","ceo":"조현완","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":29},{"bonbu":"건기","bunkwa":"판금","name":"건영테크㈜","ceo":"임진영","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":30},{"bonbu":"건기","bunkwa":"판금","name":"명성공업㈜","ceo":"윤재규","activity":"현장개선 · 레이저용접","year":"2019년 이전 · 2024년","detail":"현장개선(2019년 이전) / 레이저용접(2024년)","count":2,"no":31},{"bonbu":"엔진","bunkwa":"엔진가공","name":"㈜포메탈","ceo":"오호석","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":32},{"bonbu":"엔진","bunkwa":"엔진기능","name":"㈜테스크","ceo":"황정상","activity":"현장개선","year":"2019년 이전","detail":"현장개선(2019년 이전)","count":1,"no":33}];
+
+
+const FIELD_IMPROVEMENTS = [{"bonbu":"건기","bunkwa":"가공","name":"㈜삼우테크","ceo":"고제방","activity":"현장개선","year":"2015년","detail":"현장개선(2015년)","count":1,"no":1},{"bonbu":"건기","bunkwa":"가공","name":"㈜티엠시","ceo":"조영호","activity":"현장개선","year":"2019년","detail":"현장개선(2019년)","count":1,"no":2},{"bonbu":"건기","bunkwa":"가공","name":"㈜혜인정밀","ceo":"손병춘","activity":"현장개선","year":"2017년","detail":"현장개선(2017년)","count":1,"no":3},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜건화 창원공장","ceo":"이승민","activity":"HDPS 활동","year":"2026년 상반기","detail":"HDPS 활동(2026년 상반기)","count":1,"no":4},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜세안정기","ceo":"장길화","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":5},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜에스틸","ceo":"김용석","activity":"현장개선 · 용접로봇","year":"2014년 · 2024년","detail":"현장개선(2014년) / 용접로봇(2024년)","count":2,"no":6},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우림","ceo":"노재현","activity":"사상 · 용접로봇","year":"2023년 · 2024년 · 2025년","detail":"사상(2023년) / 용접로봇(2023년) / 사상(2024년) / 사상(2025년)","count":4,"no":7},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우진","ceo":"서찬석","activity":"현장개선 · 사상 · 용접로봇 · 템플릿","year":"2014년 · 2018년 · 2023년 · 2024년 · 2025년","detail":"현장개선(2014년) / 현장개선(2018년) / 사상(2023년) / 사상(2024년) / 용접로봇(2024년) / 사상(2025년) / 템플릿(2025년)","count":7,"no":8},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜우진이엔지","ceo":"서정범","activity":"현장개선 · 용접로봇","year":"2015년 · 2023년","detail":"현장개선(2015년) / 용접로봇(2023년)","count":2,"no":9},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜정우산업","ceo":"최종영","activity":"용접로봇 · HDPS 활동","year":"2025년 · 2026년 상반기","detail":"용접로봇(2025년) / HDPS 활동(2026년 상반기)","count":2,"no":10},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜태화물산","ceo":"최윤화","activity":"현장개선 · 템플릿 · 사상","year":"2019년 · 2024년 · 2025년","detail":"현장개선(2019년) / 템플릿(2024년) / 사상(2025년)","count":3,"no":11},{"bonbu":"건기","bunkwa":"대물제관","name":"㈜한양정밀","ceo":"신유섭","activity":"용접로봇","year":"2024년","detail":"용접로봇(2024년)","count":1,"no":12},{"bonbu":"건기","bunkwa":"대물제관","name":"동해기계㈜","ceo":"장경수","activity":"현장개선 · 템플릿","year":"2016년 · 2024년","detail":"현장개선(2016년) / 템플릿(2024년)","count":2,"no":13},{"bonbu":"건기","bunkwa":"대물제관","name":"선진정공㈜","ceo":"박성수","activity":"현장개선 · 사상 · 용접로봇 · 템플릿","year":"2016년 · 2023년 · 2024년 · 2025년","detail":"현장개선(2016년) / 사상(2023년) / 용접로봇(2023년) / 사상(2024년) / 사상(2025년) / 템플릿(2025년)","count":6,"no":14},{"bonbu":"건기","bunkwa":"동력·전장","name":"㈜두원냉기","ceo":"유지명","activity":"HDPS 활동","year":"2026년 상반기","detail":"HDPS 활동(2026년 상반기)","count":1,"no":15},{"bonbu":"건기","bunkwa":"동력·전장","name":"㈜해송엔지니어링","ceo":"류경환","activity":"현장개선","year":"2015년","detail":"현장개선(2015년)","count":1,"no":16},{"bonbu":"건기","bunkwa":"동력·전장","name":"미주산업전자㈜","ceo":"정연주","activity":"HDPS 활동","year":"2026년 상반기","detail":"HDPS 활동(2026년 상반기)","count":1,"no":17},{"bonbu":"건기","bunkwa":"동력·전장","name":"오성㈜","ceo":"구본희","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":18},{"bonbu":"건기","bunkwa":"동력·전장","name":"태경산업㈜","ceo":"김동찬","activity":"현장개선","year":"2016년","detail":"현장개선(2016년)","count":1,"no":19},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜명진기업","ceo":"김택세","activity":"현장개선","year":"2015년","detail":"현장개선(2015년)","count":1,"no":20},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜월드튜브","ceo":"정종철","activity":"현장개선","year":"2019년","detail":"현장개선(2019년)","count":1,"no":21},{"bonbu":"건기","bunkwa":"소물제관","name":"㈜청우에이티에스","ceo":"김왕규","activity":"현장개선 · 레이저용접","year":"2015년 · 2025년","detail":"현장개선(2015년) / 레이저용접(2025년)","count":2,"no":22},{"bonbu":"건기","bunkwa":"소물제관","name":"동양하이테크㈜","ceo":"최봉훈","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":23},{"bonbu":"건기","bunkwa":"소물제관","name":"성원하이드로릭스㈜","ceo":"권성흠","activity":"현장개선","year":"2018년","detail":"현장개선(2018년)","count":1,"no":24},{"bonbu":"건기","bunkwa":"유압","name":"㈜대진에이치에스","ceo":"임사현","activity":"HDPS 활동","year":"2026년 하반기","detail":"HDPS 활동(2026년 하반기)","count":1,"no":25},{"bonbu":"건기","bunkwa":"유압","name":"㈜디와이솔루텍","ceo":"이재영","activity":"현장개선","year":"2017년","detail":"현장개선(2017년)","count":1,"no":26},{"bonbu":"건기","bunkwa":"유압","name":"㈜한울에이치앤피이","ceo":"김도완","activity":"HDPS 활동","year":"2026년 하반기","detail":"HDPS 활동(2026년 하반기)","count":1,"no":27},{"bonbu":"건기","bunkwa":"유압","name":"대경기업㈜","ceo":"조승주","activity":"현장개선 · HDPS 활동","year":"2019년 · 2026년 상반기","detail":"현장개선(2019년) / HDPS 활동(2026년 상반기)","count":2,"no":28},{"bonbu":"건기","bunkwa":"유압","name":"썬하이드로릭스코리아㈜","ceo":"김경필","activity":"현장개선 · HDPS 활동","year":"2015년 · 2026년 하반기","detail":"현장개선(2015년) / HDPS 활동(2026년 하반기)","count":2,"no":29},{"bonbu":"건기","bunkwa":"판금","name":"㈜서연탑메탈","ceo":"최원재","activity":"현장개선","year":"2014년","detail":"현장개선(2014년)","count":1,"no":30},{"bonbu":"건기","bunkwa":"판금","name":"㈜성미에스테크","ceo":"최상붕","activity":"레이저용접","year":"2024년","detail":"레이저용접(2024년)","count":1,"no":31},{"bonbu":"건기","bunkwa":"판금","name":"㈜에스엘티이","ceo":"이경환","activity":"HDPS 활동","year":"2026년 상반기","detail":"HDPS 활동(2026년 상반기)","count":1,"no":32},{"bonbu":"건기","bunkwa":"판금","name":"㈜진웅엠피아","ceo":"김영재","activity":"현장개선","year":"2019년","detail":"현장개선(2019년)","count":1,"no":33},{"bonbu":"건기","bunkwa":"판금","name":"㈜컴윈스","ceo":"김태용","activity":"현장개선 · 레이저용접","year":"2015년 · 2025년","detail":"현장개선(2015년) / 레이저용접(2025년)","count":2,"no":34},{"bonbu":"건기","bunkwa":"판금","name":"㈜현대엘앤티","ceo":"조현완","activity":"용접로봇","year":"2025년","detail":"용접로봇(2025년)","count":1,"no":35},{"bonbu":"건기","bunkwa":"판금","name":"건영테크㈜","ceo":"임진영","activity":"현장개선","year":"2017년","detail":"현장개선(2017년)","count":1,"no":36},{"bonbu":"건기","bunkwa":"판금","name":"명성공업㈜","ceo":"윤재규","activity":"현장개선 · 레이저용접","year":"2018년 · 2024년","detail":"현장개선(2018년) / 레이저용접(2024년)","count":2,"no":37},{"bonbu":"엔진","bunkwa":"엔진가공","name":"㈜포메탈","ceo":"오호석","activity":"현장개선","year":"2017년","detail":"현장개선(2017년)","count":1,"no":38},{"bonbu":"엔진","bunkwa":"엔진기능","name":"㈜테스크","ceo":"황정상","activity":"현장개선","year":"2018년","detail":"현장개선(2018년)","count":1,"no":39},{"bonbu":"엔진","bunkwa":"엔진기능","name":"대지오토모티브㈜","ceo":"김혜삼","activity":"HDPS 활동","year":"2026년 하반기","detail":"HDPS 활동(2026년 하반기)","count":1,"no":40}];
 
 // Tab Switching
 function switchTab(tabId) {
@@ -1862,6 +1864,8 @@ function renderEval466Rows(divFilter) {
 
 
 
+
+
 // Field Improvement
 function renderFieldImprovement() {
   renderFieldImprovementFilters();
@@ -1870,7 +1874,7 @@ function renderFieldImprovement() {
 function renderFieldImprovementFilters() {
   const btnBox = document.getElementById('field-improvement-filter-buttons');
   if (!btnBox) return;
-  const activityOrder = ['현장개선', '용접로봇', '사상', '레이저용접', '템플릿'];
+  const activityOrder = ['HDPS 활동', '현장개선', '용접로봇', '사상', '레이저용접', '템플릿'];
   const counts = {};
   FIELD_IMPROVEMENTS.forEach(r => {
     activityOrder.forEach(a => {
@@ -1889,6 +1893,8 @@ function filterFieldImprovementTable(btn, activity) {
   document.querySelectorAll('#field-improvement-filter-buttons .filter-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   renderFieldImprovementRows(activity);
+  const search = document.querySelector('#tab-field-improvement .search-box');
+  if (search) searchTable('fieldImprovementTable', search.value);
 }
 function renderFieldImprovementRows(activity) {
   const list = activity === 'all' ? FIELD_IMPROVEMENTS : FIELD_IMPROVEMENTS.filter(r => r.activity.includes(activity));
@@ -1901,8 +1907,8 @@ function renderFieldImprovementRows(activity) {
       '<td>' + r.bunkwa + '</td>' +
       '<td style="font-weight:700;">' + r.name + '</td>' +
       '<td>' + r.ceo + '</td>' +
-      '<td title="' + (r.detail || r.activity) + '"><span class="badge badge-green">' + r.activity + '</span>' + (r.count > 1 ? '<div style="margin-top:4px; font-size:11px; color:#64748b;">' + r.detail + '</div>' : '') + '</td>' +
-      '<td style="text-align:center;"><span class="badge badge-blue">' + r.year + '</span></td>' +
+      '<td style="white-space:normal; min-width:220px; max-width:400px; overflow-wrap:anywhere;" title="' + (r.detail || r.activity) + '"><span class="badge badge-green" style="white-space:normal;">' + r.activity + '</span>' + (r.count > 1 ? '<div style="margin-top:4px; font-size:11px; color:#64748b;">' + r.detail + '</div>' : '') + '</td>' +
+      '<td style="text-align:center; white-space:normal; min-width:140px; max-width:260px;"><span class="badge badge-blue" style="white-space:normal;">' + r.year + '</span></td>' +
       '</tr>';
   }).join('');
 }
