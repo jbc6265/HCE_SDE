@@ -86,6 +86,12 @@ body { background-color: var(--bg-slate); color: var(--text-main); line-height: 
   color: #cbd5e1;
   margin-top: 2px;
 }
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
 .source-pill {
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);
@@ -541,6 +547,7 @@ th.col-addr-fill, td.col-addr-fill {
   .grid-3 { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
+  .header-meta { align-items: flex-start; }
   .kpi-grid { grid-template-columns: 1fr; }
   .research-kpi-grid { grid-template-columns: 1fr; }
   .quality-kpi-grid { grid-template-columns: 1fr; }
@@ -869,8 +876,13 @@ th.col-addr-fill, td.col-addr-fill {
           <p>HD건설기계 협력회사 협의회 정회원 129개사 및 종합등급평가 466개사 전수 관리 대시보드</p>
         </div>
       </div>
-      <div class="source-pill">
-        데이터 기준: <strong>현건회_MES구축_안전사업장구축_전수조사_R3.xlsx</strong>
+      <div class="header-meta">
+        <div class="source-pill">
+          데이터 기준: <strong>현건회_MES구축_안전사업장구축_전수조사_R3.xlsx</strong>
+        </div>
+        <div class="source-pill">
+          제작, 관리 : <strong>협력사육성팀 조병철 선임</strong>
+        </div>
       </div>
     </div>
     
@@ -2373,6 +2385,43 @@ function getResearchActivityKeywords() {
   ];
 }
 
+function qualityDChatReply(nq) {
+  const asksQualityD = nq.includes('품질d') || nq.includes('d등급') || nq.includes('품질디') || (nq.includes('품질') && nq.includes('개선활동'));
+  if (!asksQualityD) return null;
+
+  const years = [];
+  if (nq.includes('2025') || nq.includes('25년')) years.push('2025년');
+  if (nq.includes('2026') || nq.includes('26년')) years.push('2026년');
+  const bonbus = ['건기', '엔진'].filter(b => nq.includes(normText(b)));
+  const divisions = [...new Set(SUPPLIERS.map(s => s.bunkwa))].filter(d => d && nq.includes(normText(d)));
+  let list = QUALITY_D_ACTIVITIES.filter(r =>
+    (!years.length || years.includes(r.year)) &&
+    (!bonbus.length || bonbus.includes(r.bonbu)) &&
+    (!divisions.length || divisions.includes(r.bunkwa))
+  );
+  const link = '<br><a href="#quality-d" onclick="switchTab(\'quality-d\'); toggleChat();">품질D등급 개선활동 전체 보기</a>';
+
+  if (years.length || bonbus.length || divisions.length || nq.includes('업체') || nq.includes('명단') || nq.includes('대상')) {
+    const label = [...years, ...bonbus, ...divisions].join(' · ') || '품질D등급 개선활동';
+    if (!list.length) return '<strong>' + escapeHtml(label) + '</strong><br>현건회 129개사 기준, 해당 조건에 일치하는 품질D등급 개선활동 협력사가 없습니다.' + link;
+    const rows = list.map(r => '<tr><td>' + r.no + '</td><td>' + escapeHtml(r.name) + '</td><td>' + escapeHtml(r.bonbu) + '</td><td>' + escapeHtml(r.bunkwa) + '</td><td>' + r.year + '</td></tr>').join('');
+    return '✅ <strong>' + escapeHtml(label) + ' 협력사</strong>는 총 <strong>' + list.length + '개사</strong>입니다.<br>' +
+      '<table class="bot-table"><thead><tr><th>순번</th><th>회사명</th><th>본부</th><th>분과</th><th>활동년도</th></tr></thead><tbody>' + rows + '</tbody></table>' + link;
+  }
+
+  const total = SUPPLIERS.length;
+  const y2025 = QUALITY_D_ACTIVITIES.filter(r => r.year === '2025년').length;
+  const y2026 = QUALITY_D_ACTIVITIES.filter(r => r.year === '2026년').length;
+  const hce = QUALITY_D_ACTIVITIES.filter(r => r.bonbu === '건기').length;
+  const engine = QUALITY_D_ACTIVITIES.filter(r => r.bonbu === '엔진').length;
+  return '✅ <strong>품질D등급 개선활동 현황 요약</strong><br>' +
+    '• 개선활동 협력사: <strong>' + QUALITY_D_ACTIVITIES.length + '/' + total + '개사 (' + (QUALITY_D_ACTIVITIES.length / total * 100).toFixed(1) + '%)</strong><br>' +
+    '• 활동년도: <strong>2025년 ' + y2025 + '개사</strong> / <strong>2026년 ' + y2026 + '개사</strong><br>' +
+    '• 본부별: <strong>건기 ' + hce + '개사</strong> / <strong>엔진 ' + engine + '개사</strong><br>' +
+    '• 기준 데이터: R3 파일 「현건회 MES구축 현황」 시트 P열<br>' +
+    '<span style="font-size:11px; color:#64748b;">* “2026년 품질D 업체”, “건기 품질D 명단”처럼 질문하면 조건별 명단을 볼 수 있습니다.</span>' + link;
+}
+
 function researchCommitteeChatReply(nq) {
   const activityKeywords = getResearchActivityKeywords();
   const matchedActivities = activityKeywords
@@ -2463,6 +2512,8 @@ function processChatQuery(query) {
         : '자료에서 확인된 이력 없음';
       const researchRecord = getResearchCommitteeRecord(s);
       const researchText = researchRecord ? getResearchActivityBadges(researchRecord.activity) : '<span class="badge badge-gray">활동 이력 없음</span>';
+      const qualityDRecord = getQualityDRecord(s);
+      const qualityDText = qualityDRecord ? '<span class="badge badge-green">대상</span> ' + qualityDRecord.year : '<span class="badge badge-gray">해당 없음</span>';
       let card = '<div class="bot-card">' +
         '<div class="bot-card-title">🏢 ' + s.name + ' (' + s.bonbu + ' / ' + s.bunkwa + ')</div>' +
         '<div><strong>대표자:</strong> ' + (s.ceo || '-') + ' | <strong>HCE코드:</strong> ' + (s.code || '-') + '</div>' +
@@ -2473,6 +2524,7 @@ function processChatQuery(query) {
         '<strong>🛡️ 안전 구축지원:</strong> ' + safeBadge + '<br>' +
         '<strong>📋 종합평가 대상:</strong> ' + s.eval_stat + '<br>' +
         '<strong>🛠️ 현장개선 지원활동:</strong><br>' + fieldText + '<br>' +
+        '<strong>✅ 품질D등급 개선활동:</strong> ' + qualityDText + '<br>' +
         '<strong>🔬 연구위원회 활동:</strong><br>' + researchText +
         '</div>' +
         '</div>';
@@ -2480,6 +2532,9 @@ function processChatQuery(query) {
     }
   }
   
+  const qualityDReply = qualityDChatReply(nq);
+  if (qualityDReply !== null) return qualityDReply;
+
   const fieldReply = fieldSupportChatReply(nq);
   if (fieldReply !== null) return fieldReply;
 
@@ -2605,7 +2660,8 @@ function processChatQuery(query) {
       '3. <strong>안전사업장 구축지원:</strong> 45개사 (34.9%) [미구축 84개사]<br>' +
       '4. <strong>종합등급평가 대상:</strong> 125개사 (96.9%)<br>' +
       '5. <strong>현장개선 지원:</strong> ' + FIELD_IMPROVEMENTS.length + '개사 / ' + FIELD_IMPROVEMENTS.reduce((sum, r) => sum + getFieldSupportEntries(r).length, 0) + '건<br><br>' +
-      '6. <strong>연구위원회 활동:</strong> ' + RESEARCH_COMMITTEE.length + '개사 (5개 활동분과)<br><br>' +
+      '6. <strong>품질D등급 개선활동:</strong> ' + QUALITY_D_ACTIVITIES.length + '개사 (2025년 9 / 2026년 11)<br>' +
+      '7. <strong>연구위원회 활동:</strong> ' + RESEARCH_COMMITTEE.length + '개사 (5개 활동분과)<br><br>' +
       '💡 <strong>추천 질문:</strong><br>' +
       '• 회사명 검색 (예: "선진정공", "오성기공")<br>' +
       '• "MES 미구축 협력사"<br>' +
@@ -2623,9 +2679,10 @@ function processChatQuery(query) {
     '• <strong>MES 미구축</strong> 또는 <strong>26년 MES 계획</strong><br>' +
     '• <strong>2025년 안전지원</strong> 또는 <strong>안전 미구축</strong><br>' +
     '• <strong>판금 분과</strong> 또는 <strong>경남 지역</strong><br>' +
-    '• <strong>종합평가 비대상사</strong><br>' +
-    '• <strong>현장개선 지원현황</strong> 또는 <strong>2026년 하반기 HDPS</strong><br>' +
-    '• <strong>연구위원회 현황</strong> 또는 <strong>BCC 활성화 업체</strong>';
+      '• <strong>종합평가 비대상사</strong><br>' +
+      '• <strong>현장개선 지원현황</strong> 또는 <strong>2026년 하반기 HDPS</strong><br>' +
+      '• <strong>품질D등급 개선활동</strong> 또는 <strong>2026년 품질D 업체</strong><br>' +
+      '• <strong>연구위원회 현황</strong> 또는 <strong>BCC 활성화 업체</strong>';
 }
 
 </script>
@@ -2654,7 +2711,7 @@ function processChatQuery(query) {
     <div id="chatMessages" class="chat-messages">
       <div class="msg-bubble msg-bot">
         안녕하세요! <strong>협력사육성팀 지원현황 안내 챗봇</strong>입니다.<br><br>
-        현건회 129개사의 <strong>MES 구축 현황, 안전사업장 구축 지원, 종합등급평가 대상, 현장개선·HDPS 지원활동, 연구위원회 활동</strong> 정보를 즉시 검색해 드립니다.<br><br>
+        현건회 129개사의 <strong>MES 구축 현황, 안전사업장 구축 지원, 종합등급평가 대상, 현장개선·HDPS 지원활동, 품질D등급 개선활동, 연구위원회 활동</strong> 정보를 즉시 검색해 드립니다.<br><br>
         아래 추천 질문을 누르시거나 궁금하신 회사명/조건을 입력해 보세요!
       </div>
     </div>
@@ -2662,6 +2719,8 @@ function processChatQuery(query) {
     <!-- Quick Chips -->
     <div class="chat-chips">
       <button class="chip-btn" onclick="sendChip('현장개선 지원현황')">현장개선 지원</button>
+      <button class="chip-btn" onclick="sendChip('품질D등급 개선활동')">품질D 개선</button>
+      <button class="chip-btn" onclick="sendChip('2026년 품질D 업체')">'26년 품질D</button>
       <button class="chip-btn" onclick="sendChip('연구위원회 현황')">연구위원회</button>
       <button class="chip-btn" onclick="sendChip('BCC 활성화 업체')">BCC 활성화</button>
       <button class="chip-btn" onclick="sendChip('HDPS 활동 업체')">HDPS 활동</button>
